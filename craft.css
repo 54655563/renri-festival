@@ -1,0 +1,164 @@
+.craft-fortune, .craft-dress, .craft-consent {
+  --craft-red: #87382d;
+  --craft-ink: #4e3b30;
+  --craft-line: #bd9165;
+  --craft-paper: #f5e8ce;
+  --craft-serif: KaiTi, STKaiti, 'Noto Serif SC', 'Songti SC', SimSun, serif;
+}
+
+.craft-fortune [hidden], .craft-dress [hidden], .craft-dress-scene [hidden], .craft-consent [hidden] { display: none !important; }
+
+.craft-fortune-scene, .craft-dress-scene {
+  box-sizing: border-box;
+  min-height: inherit;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2.25rem);
+  font-family: KaiTi, STKaiti, 'Noto Serif SC', SimSun, serif;
+}
+
+.craft-vessel {
+  position: relative;
+  width: min(13rem, 60%);
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  z-index: 0;
+}
+
+.craft-vessel::before {
+  position: absolute;
+  content: '';
+  z-index: -1;
+  top: 4%;
+  width: 106%;
+  aspect-ratio: 1;
+  border: 1px solid #d4a875b0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f3d79c 0, #e7bc7ecd 62%, #966b4838 100%);
+  box-shadow: 0 0 0 6px #ead3a66b, 0 8px 24px #3d21183d;
+}
+
+.craft-vessel svg { width: 100%; height: auto; filter: drop-shadow(0 4px 3px #3a1c1666); transform-origin: 50% 84%; }
+.is-shaking .craft-vessel svg { animation: craft-shake 1s ease-in-out both; }
+.craft-vessel figcaption, .craft-stage-title {
+  width: max-content;
+  max-width: 100%;
+  background: #f2dfb9;
+  color: #672d26;
+  border: 1px solid #a16d48;
+  box-shadow: inset 0 0 0 2px #f4e7cb, inset 0 0 0 3px #c8a276;
+  text-align: center;
+  padding: .44rem .8rem;
+  font-size: .79rem;
+  font-weight: bold;
+  letter-spacing: .13em;
+}
+
+@keyframes craft-shake {
+  0%, 100% { transform: rotate(0); }
+  10%, 30%, 50%, 70% { transform: rotate(-9deg) translateY(-3px); }
+  20%, 40%, 60%, 80% { transform: rotate(9deg) translateY(-5px); }
+  90% { transform: rotate(-4deg); }
+}
+
+.craft-fortune h2, .craft-dress h2 { font-family: var(--craft-serif); letter-spacing: .1em; }
+.craft-theme { box-sizing: border-box; min-inline-size: 0; margin: 1.2rem 0 .8rem; border: 0; padding: 0; }
+.craft-theme legend { padding: 0; margin-bottom: .6rem; font-family: var(--craft-serif); color: var(--craft-ink); font-weight: bold; }
+.craft-theme .choices { display: flex; flex-wrap: wrap; gap: .45rem; }
+.craft-theme label { display: block; position: relative; }
+.craft-theme input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  margin: 0;
+}
+
+.craft-theme label > span {
+  box-sizing: border-box;
+  display: block;
+  min-height: 2.75rem;
+  cursor: pointer;
+  padding: .57rem .74rem;
+  border: 1px solid var(--craft-line);
+  border-radius: 3px;
+  color: var(--craft-ink);
+  background: #f7eddb;
+}
+
+.craft-theme label:hover > span { background: #f0dcc0; }
+.craft-theme input:checked + span { color: var(--craft-red); border-color: var(--craft-red); background: #efd7bf; box-shadow: inset 0 0 0 1px var(--craft-red); }
+.craft-theme input:focus-visible + span { outline: 2px solid var(--craft-red); outline-offset: 3px; }
+.craft-note { color: #695145; font-size: .82rem; line-height: 1.55; }
+
+.craft-fortune-paper {
+  position: relative;
+  box-sizing: border-box;
+  margin-block: 1rem .6rem;
+  padding: .8rem 1rem .85rem 1.12rem;
+  min-height: 4.25rem;
+  border: 1px solid var(--craft-line);
+  box-shadow: inset 0 0 0 4px #f5e8ce, inset 0 0 0 5px #d7b88b;
+  background: repeating-linear-gradient(9deg, transparent 0 4px, #96674109 4px 5px), var(--craft-paper);
+  color: var(--craft-ink);
+}
+
+.craft-fortune-paper p { margin: .32rem 0; }
+.craft-fortune-paper small { color: #68483d; }
+.craft-rank { color: var(--craft-red); letter-spacing: .14em; font-family: var(--craft-serif); font-size: 1.48rem; }
+.craft-verse { color: #732b26; font-family: var(--craft-serif); font-size: 1.15rem; }
+.craft-portrait-stage { width: min(100%, 24rem); display: grid; justify-items: center; gap: .55rem; }
+.craft-stage-title { margin: 0; }
+.craft-stage-text { margin: 0; color: #602c22; background: #f1dec0; padding: .28rem .68rem; box-shadow: 0 2px 8px #4d2d2229; font-size: .76rem; letter-spacing: .1em; text-align: center; }
+
+.craft-portrait-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: min(100%, 19rem);
+  padding-block: .5rem;
+}
+
+.craft-portrait-gallery svg, .craft-portrait-display svg, .craft-portrait-display canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 .28rem .9rem #51352566;
+}
+
+.craft-portrait-gallery svg:first-child { transform: translate(5%, 5%) rotate(-7deg); }
+.craft-portrait-gallery svg:last-child { transform: translate(-6%, -2%) rotate(7deg); }
+.craft-portrait-display { width: min(100%, 11.75rem); }
+.craft-theme .craft-presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.craft-presets label > span { display: grid; grid-template-columns: 1rem minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: .1rem .4rem; height: 100%; }
+.craft-presets b { font-family: var(--craft-serif); font-size: 1.03em; }
+.craft-presets small { grid-column: 2; font-size: .74rem; color: #63493a; }
+.craft-swatch { width: .85rem; height: .85rem; transform: rotate(45deg); border: 1px solid #885841; box-shadow: inset 0 0 0 2px #f0cf9c99; background: #587260; }
+.craft-swatch-paper { background: #9c4b4d; }
+.craft-file { display: grid; gap: .4rem; font-weight: bold; margin-bottom: .75rem; }
+.craft-file input { max-width: 100%; }
+.craft-photo-preview { display: flex; align-items: end; gap: .7rem; margin-bottom: .85rem; color: #624a3d; font-size: .84rem; }
+.craft-photo-preview img { display: block; width: 5.25rem; height: 6.5rem; object-fit: cover; border: 1px solid var(--craft-line); background: var(--craft-paper); }
+.craft-loading { display: flex; align-items: center; gap: .65rem; padding: .65rem .85rem; margin-bottom: .8rem; border: 1px solid var(--craft-line); border-radius: 3px; background: #f7eddb; color: var(--craft-red); font-size: .88rem; font-weight: 600; }
+.craft-spinner { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; border: 2px solid #d7b88b; border-top-color: var(--craft-red); border-radius: 50%; animation: craft-spin .85s linear infinite; }
+@keyframes craft-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 540px) {
+  .craft-fortune-scene, .craft-dress-scene { padding: .65rem .9rem; }
+  .craft-vessel { width: min(8.8rem, 56%); }
+  .craft-portrait-gallery { width: min(100%, 13rem); }
+  .craft-portrait-display { width: min(100%, 9rem); }
+  .craft-stage-title, .craft-vessel figcaption { padding: .32rem .65rem; }
+  .craft-portrait-stage { gap: .33rem; }
+  .craft-theme label > span { padding-inline: .56rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-shaking .craft-vessel svg, .craft-spinner { animation: none; }
+}

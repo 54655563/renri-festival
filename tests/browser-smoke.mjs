@@ -1,0 +1,85 @@
+// Run with a Chrome debugging port (default 9223) and the static site on 8765.
+import assert from 'node:assert/strict';
+const port = process.env.CDP_PORT || 9223;
+const target = await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'}).then(r=>r.json());
+const socket = new WebSocket(target.webSocketDebuggerUrl);
+await new Promise(resolve=>socket.addEventListener('open',resolve,{once:true}));
+let serial=0; const pending=new Map();
+socket.onmessage=({data})=>{const {id,result,error}=JSON.parse(data);if(pending.has(id)){const [yes,no]=pending.get(id);pending.delete(id);error?no(Error(error.message)):yes(result);}};
+const cdp=(method,params={})=>new Promise((yes,no)=>{const id=++serial;pending.set(id,[yes,no]);socket.send(JSON.stringify({id,method,params}));});
+const evaluate=async expression=>{const r=await cdp('Runtime.evaluate',{expression,returnByValue:true});if(r.exceptionDetails) throw Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text);return r.result.value;};
+const select=id=>`document.querySelector(${JSON.stringify(id)})`;
+const click=id=>evaluate(`${select(id)}.click()`);
+const wait=async(expr,ms=21000)=>{const start=Date.now();while(Date.now()-start<ms){if(await evaluate(expr))return;await new Promise(r=>setTimeout(r,100));}throw Error(`Timed out: ${expr}`);};
+const visible=id=>`${select(id)}?.getClientRects().length>0`;
+const count=n=>`document.querySelector('#count')?.textContent==='${n}/4'`;
+try {
+  await cdp('Network.enable');await cdp('Network.setCacheDisabled',{cacheDisabled:true});
+  await cdp('Page.addScriptToEvaluateOnNewDocument',{source:`if(location.protocol==='http:'){localStorage.removeItem('renri-sound');if(!sessionStorage.getItem('renri-intro-seen'))localStorage.removeItem('renri-api-v1');}`});
+  await cdp('Page.navigate',{url:'http://127.0.0.1:8765/'});
+  await wait(visible('#skip'));await wait('document.querySelector("#film").currentTime > 0',5000);
+  await evaluate('document.querySelector("#film").playbackRate = 4');
+  await wait(visible('#enter'));assert.equal(await evaluate('document.querySelector("#film").ended'),true);
+  await click('#enter');await wait(visible('#station-fortune'));
+  await evaluate(`(() => {const nativeFetch=window.fetch.bind(window);window.fetch=(address,init)=>{if(address!=='/api/smoke-text')return nativeFetch(address,init);window.smokeTextRequest={address,authorization:init.headers.Authorization,model:JSON.parse(init.body).model};return Promise.resolve(new Response('{}',{headers:{'Content-Type':'application/json'}}));};})()`);
+  assert.equal(await evaluate('document.querySelector("#sound").getAttribute("aria-pressed")'), 'true');
+  await wait('!document.querySelector("#bgm").paused');
+  for(const width of [1440,360]){
+    await cdp('Emulation.setDeviceMetricsOverride',{width,height:850,deviceScaleFactor:1,mobile:false});
+    await wait(`innerWidth===${width}`);
+    const sizes=await evaluate(`({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,overflow:[...document.querySelectorAll('#main *')].map(el=>[el.className.baseVal??el.className,Math.round(el.getBoundingClientRect().right)]).filter(([,right])=>right>document.documentElement.clientWidth)})`);
+    assert.equal(sizes.scroll,sizes.client,`map fits ${width}: ${JSON.stringify(sizes)}`);
+  }
+  await click('#api-settings');await wait(visible('#api-form'));
+  await evaluate('document.querySelector("#text-endpoint").value="//invalid.example/api"');
+  await click('#api-form button[type=submit]');
+  assert.match(await evaluate('document.querySelector("#api-error").textContent'),/地址无效.*HTTPS/);
+  await evaluate('document.querySelector("#text-endpoint").value="/api/smoke-text";document.querySelector("#text-key").value="smoke-key";document.querySelector("#image-endpoint").value="/api/smoke-image";document.querySelector("#image-key").value="smoke-image-key"');
+  await click('#api-form button[type=submit]');
+  const saved=await evaluate('JSON.parse(localStorage.getItem("renri-api-v1"))');
+  assert.deepEqual(saved,{textEndpoint:'/api/smoke-text',textModel:'deepseek-chat',imageEndpoint:'/api/smoke-image'});
+  await click('#api-settings');await wait(visible('#api-form'));
+  assert.equal(await evaluate('document.querySelector("#text-key").value'),'smoke-key');
+  await evaluate('document.querySelector("#text-endpoint").value="/api/different";document.querySelector("#text-endpoint").dispatchEvent(new Event("input",{bubbles:true}))');
+  assert.equal(await evaluate('document.querySelector("#text-key").value'),'');
+  await click('[data-close]');
+  await click('#station-cake');
+  assert.match(await evaluate('document.querySelector("#cake-area").getAttribute("aria-label")'), /煎饼游戏区.*Pancake game/);
+  await click('#cake-start');await wait(visible('#cake-flip'));
+  assert.match(await evaluate('document.querySelector("#cake-state").textContent'), /准备开火.*Get ready/);
+  await evaluate('window.dispatchEvent(new Event("blur"))');
+  const frozen=await evaluate('document.querySelector("#cake-pointer").getAttribute("style")');
+  await new Promise(r=>setTimeout(r,600));
+  assert.equal(await evaluate('document.querySelector("#cake-pointer").getAttribute("style")'),frozen,'blur freezes pointer');
+  await evaluate('window.dispatchEvent(new Event("focus"))');
+  await wait(count(1),23000);
+  assert.match(await evaluate('document.querySelector("#cake-state").textContent'), /已获得印章.*Stamp earned/);
+  assert.deepEqual(await evaluate('JSON.parse(sessionStorage.getItem("renri-visitor-v1")).scores'),[0,0,0]);
+  await click('#cake-map');await click('#station-climb');
+  const key=(type)=>evaluate(`document.querySelector('#climb-hold').dispatchEvent(new KeyboardEvent('${type}',{code:'Space',key:' ',bubbles:true,cancelable:true}))`);
+  for(let leg=0;leg<3;leg++){
+    await key('keydown');await wait(`(${visible('#climb-summit')}) || document.querySelector('#climb-stamina').value===0`,6500);await key('keyup');
+    if(await evaluate(visible('#climb-summit')))break;
+    await wait("document.querySelector('#climb-stamina').value>=99",5000);
+  }
+  await wait(visible('#climb-summit'));
+  assert.match(await evaluate('document.querySelector(\'[data-topic="想家"]\').textContent'), /想家.*Homesick/);
+  await click('[data-topic="想家"]');
+  assert.equal(await evaluate('document.querySelector("#climb-topic").value'), '想家');
+  await click(await evaluate(visible('#climb-local')) ? '#climb-local' : '#climb-submit');await wait(count(2));
+  await wait(visible('#climb-poem'));
+  assert.match(await evaluate('document.querySelector("#climb-poem-status").textContent'), /诗笺已备好.*Your poem is ready/);
+  assert.match(await evaluate('document.querySelector("#climb-poem [lang=en].kinetic-translation").textContent'), /Late light falls/);
+  await click('#climb-map');await click('#station-dress');await click('[data-dress="sample"]');await wait(count(3));await click('[data-dress="map"]');
+  await click('#station-fortune');await click('[data-fortune="shake"]');await click('#passport');await wait(count(4));
+  assert.deepEqual(await evaluate('window.smokeTextRequest'),{address:'/api/smoke-text',authorization:'Bearer smoke-key',model:'deepseek-chat'});
+  await wait('document.querySelector("[data-pass-count]").textContent.includes("4/4")');await click('#dismiss-pass');
+  await wait('document.querySelector("#modal.celebrate")?.open');assert.equal(await evaluate('document.querySelector("#save-pass").disabled'),false);
+  await cdp('Page.reload');await wait(visible('#station-fortune'));await wait(count(4));
+  await click('#api-settings');await wait(visible('#api-form'));
+  assert.deepEqual(await evaluate('[document.querySelector("#text-endpoint").value,document.querySelector("#text-key").value,document.querySelector("#image-endpoint").value,document.querySelector("#image-key").value]'), ['/api/smoke-text','','/api/smoke-image','']);
+  await click('[data-api-reset]');await click('#api-form button[type=submit]');
+  await click('#reset');await click('[data-yes]');await wait(count(0));
+  assert.equal(await evaluate('JSON.parse(sessionStorage.getItem("renri-visitor-v1")).summit'),false);
+  console.log('Browser smoke passed: opening video, default music, responsive bilingual map, API settings and ephemeral keys, paused pancake, four stamps, refresh and visitor reset.');
+} finally {socket.close();}

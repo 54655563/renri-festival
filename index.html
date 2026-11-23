@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f1e6">
+  <meta name="description" content="正月初七，山河同春。四处游园小站，收集你的专属人日护照。">
+  <title>人日嘉年华 · Renri Festival</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23912f29'/%3E%3Ctext x='5' y='24' font-size='22' fill='white'%3E人%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css?v=20261123h">
+  <link rel="stylesheet" href="craft.css?v=20261123h">
+  <link rel="stylesheet" href="kinetic.css">
+  <link rel="stylesheet" href="scene-presentation.css">
+  <script defer src="config.js?v=20261123h"></script>
+  <script defer src="core.js"></script>
+  <script defer src="api-settings.js?v=20261123h"></script>
+  <script defer src="craft.js?v=20261123h"></script>
+  <script defer src="kinetic.js"></script>
+  <script defer src="scene-presentation.js"></script>
+  <script defer src="app.js?v=20261123h"></script>
+</head>
+<body>
+  <section id="intro" class="intro" aria-label="人日序影片 / Renri prologue" hidden>
+    <video id="film" preload="auto" muted playsinline aria-label="人日传说影片 / The legend of Renri"></video>
+    <div class="intro-top"><span>人日 / <span lang="en">Prologue</span></span><button id="film-sound" type="button" aria-pressed="false">打开影片声音 <small lang="en">Unmute film</small></button></div>
+    <div class="intro-skip"><button id="skip" type="button">跳过片头 → <small lang="en">Skip intro</small></button><button id="play" type="button" hidden>播放序章 <small lang="en">Play film</small></button></div>
+    <div class="intro-gate" id="gate" hidden>
+      <p class="eyebrow">THE SEVENTH DAY · 正月初七</p>
+      <h1>人日嘉年华</h1>
+      <p>愿你与天地万物，一起迎春。<small lang="en" class="en-line">Welcome spring alongside all living things.</small></p>
+      <button id="enter" class="primary" type="button"><span>展卷游园 <small lang="en" class="en-line">Enter festival</small></span><span aria-hidden="true">↗</span></button>
+    </div>
+  </section>
+  <div id="site" hidden>
+    <header class="top"><nav class="shell" aria-label="嘉年华导航 / Festival navigation">
+      <button class="brand" id="home" type="button"><span class="seal" aria-hidden="true">人<br>日</span><span><strong>人日嘉年华</strong><small>RENRI FESTIVAL</small></span></button>
+      <span id="nav-title" class="nav-title"></span>
+      <div class="nav-actions"><button class="nav-button" id="passport" type="button">护照 <span id="count">0/4</span><small lang="en" class="en-line">Passport</small></button><button class="nav-button" id="sound" type="button" aria-pressed="true">音乐 · 开 <small lang="en" class="en-line">Music on</small></button><button class="nav-button" id="api-settings" type="button">API 设置 <small lang="en" class="en-line">API settings</small></button></div>
+    </nav></header>
+    <main id="main"></main>
+    <footer><div class="shell footer-inner"><span class="seal" aria-hidden="true">人日</span><div><strong>人日嘉年华 <small lang="en">Renri Festival</small></strong><p>AIH5571 第13组 · 人日互动网站 <small lang="en" class="en-line">Group 13 · An interactive Renri festival</small></p></div><span class="footer-tag">春来无事，只愿相逢。<small lang="en" class="en-line">A quiet spring, a chance to meet.</small></span></div></footer>
+  </div>
+  <dialog id="modal" aria-labelledby="modal-title"></dialog>
+  <audio id="bgm" loop preload="none"></audio>
+  <div id="announce" class="sr" aria-live="polite"></div>
+</body>
+</html>

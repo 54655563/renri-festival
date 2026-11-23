@@ -1,0 +1,74 @@
+.kinetic-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+:is(#cake-area, #climb-summit) [hidden], #cake-rank-form[hidden], #climb-game[hidden], #climb-summit[hidden] { display: none; }
+
+.kinetic-plaque {
+  position: absolute;
+  z-index: 1;
+  left: clamp(.65rem, 4%, 1.75rem);
+  bottom: clamp(.65rem, 5%, 1.75rem);
+  padding: .6rem .95rem;
+  color: #fff4d3;
+  background: #39251d;
+  border: 1px solid #dfac68;
+  border-radius: .4rem;
+  box-shadow: 0 3px 10px #261b1760;
+}
+
+.kinetic-plaque small,
+.kinetic-plaque strong { display: block; }
+.kinetic-plaque small { letter-spacing: .16em; }
+.kinetic-plaque strong { font-size: clamp(1.1rem, 3vw, 1.65rem); }
+.climb-scene .kinetic-plaque { background: #223d36; border-color: #c5d3a5; }
+.kinetic-trail { position: absolute; inset: 3% 10% 10%; width: 80%; height: 87%; filter: drop-shadow(0 2px 2px #163e30); }
+.kinetic-game:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+
+.kinetic-scale {
+  height: 1.15rem;
+  margin-top: 1.4rem;
+  border-radius: 1rem;
+  border: 1px solid #774123;
+  position: relative;
+  background: linear-gradient(to right, #af5b41 0 40%, #edc694 40% 46%, #ffde54 46% 54%, #edc694 54% 60%, #af5b41 60% 100%);
+}
+
+.kinetic-scale > i {
+  display: block;
+  height: 1.65rem;
+  width: .24rem;
+  position: absolute;
+  top: -.26rem;
+  border-radius: .125rem;
+  transform: translateX(-50%);
+  background: #2e2018;
+  box-shadow: 0 0 0 1px #fff6d8;
+}
+
+.kinetic-scale-labels { display: flex; justify-content: space-between; margin-top: .45rem; font-size: .78em; }
+.kinetic-tries { display: flex; flex-wrap: wrap; gap: .35rem; padding: 0; list-style: none; }
+.kinetic-tries li { padding: .25rem .55rem; border: 1px solid #ad835f; border-radius: .35rem; font-size: .87em; }
+.kinetic-tries .is-reached { background: #dbe6c9; color: #294332; border-color: #607f5a; }
+#cake-flip[aria-disabled="true"] { opacity: .65; cursor: not-allowed; }
+#cake-ranking strong { margin-inline-start: .4em; }
+
+.kinetic-meters { display: grid; gap: .5rem; }
+.kinetic-meters label { display: flex; justify-content: space-between; }
+.kinetic-meters progress { width: 100%; height: .75rem; accent-color: #52734e; }
+#climb-stamina { accent-color: #a95031; }
+.kinetic-hold { touch-action: none; user-select: none; }
+.kinetic-hold.is-held { box-shadow: inset 0 0 0 2px currentColor; }
+#climb-topic, #cake-name { width: 100%; max-width: 20rem; }
+.kinetic-poem { background: #f8eed2; color: #38281c; padding: .8rem 1rem; border-inline-start: 3px solid #a25637; margin-block: .8rem; overflow-wrap: anywhere; }
+.kinetic-poem h3 { margin: 0; }
+.kinetic-verse { font-family: "Noto Serif SC", "Songti SC", SimSun, serif; font-size: 1.3em; letter-spacing: .22em; line-height: 1.9; }
+.kinetic-translation { font-family: Georgia, serif; line-height: 1.55; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-scene *, .kinetic-game *, #climb-game * { animation: none !important; transition: none !important; }
+  #climb-marker { display: none; }
+}
